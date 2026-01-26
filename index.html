@@ -140,6 +140,22 @@ border:none;
 border-radius:8px;
 font-size:16px;
 }
+.accordion-controls{
+display:flex !important;
+gap:10px;
+margin:20px 0;
+}
+
+.accordion-controls button{
+flex:1;
+background:#2e7d32;
+color:white;
+border:none;
+padding:12px;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+}
 
 </style>
 </head>
@@ -186,6 +202,7 @@ onsubmit="return confirmSend()">
 <div class="accordion-controls">
 <button type="button" onclick="openAll()">Tout ouvrir</button>
 <button type="button" onclick="closeAll()">Tout fermer</button>
+
 </div>
 
 <!-- SEMAINE 1 -->
