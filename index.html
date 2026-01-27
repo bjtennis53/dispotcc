@@ -1173,43 +1173,14 @@ function buildSummary(){
   }
 
   /* COMMENTAIRES */
-  const comment = document.querySelector("#comments")?.value || "";
+ const comment = document.querySelector("#comments").value;
 
-  if(comment!==""){
-    html+="<hr><p><strong>Commentaires :</strong><br>"+comment+"</p>";
-  }
-
-  document.getElementById("summaryContent").innerHTML=html;
+if(comment.trim() !== ""){
+  html += "<hr><p><strong>Commentaires :</strong><br>" + comment + "</p>";
 }
 
 </script>
-<script>
-console.log("script chargé");
 
-function buildSummary(){
-
-  let html="";
-
-  const checked=document.querySelectorAll("input[type=checkbox]:checked");
-
-  html+="<p><strong>Créneaux :</strong></p>";
-
-  checked.forEach(cb=>{
-    html+=cb.value+"<br>";
-  });
-
-  const comment=document.getElementById("comments").value;
-  html+="<hr><p><strong>Commentaires :</strong><br>"+comment+"</p>";
-
-  document.getElementById("summaryContent").innerHTML=html;
-}
-
-document.querySelector("form").addEventListener("submit",function(e){
-  e.preventDefault();
-  buildSummary();
-  document.getElementById("summaryBox").style.display="block";
-});
-</script>
 
 </body>
 </html>
