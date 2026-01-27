@@ -1032,8 +1032,6 @@ Aucune disponibilité ce jour
 <!-- FIN SEMAINE 5 -->
 <br>
 <textarea id="comments" name="entry.3333333333" placeholder="Commentaires"></textarea>
-
-
 <br>
 <div class="actions">
 <button type="reset" class="reset">Réinitialiser</button>
@@ -1175,7 +1173,8 @@ function buildSummary(){
   }
 
   /* COMMENTAIRES */
-  const comment=document.getElementById("comments").value.trim();
+  const comment = document.querySelector("#comments")?.value || "";
+
   if(comment!==""){
     html+="<hr><p><strong>Commentaires :</strong><br>"+comment+"</p>";
   }
