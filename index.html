@@ -231,10 +231,9 @@ cursor:pointer;
 </header>
 
 <div class="explain">
-<strong>Cocher les cases où vous êtes libres</strong><br>
-Créneaux d’1h de 08h à 23h
-</div>
-
+<strong>FORMULAIRE DE MODIFICATION DES DISPOS ANNONCEES DANS TENUP<br>
+Précisez vos nouvelles disponibilités en cochant les créneaux ou VOUS ETES LIBRES<br>
+En cas d'indisponibilté totale sur une journée, activez le bouton "aucune disponibilité ce jour"
 <form method="POST"
 action="https://docs.google.com/forms/d/e/1FAIpQLSxxxxxxxxxxxx/formResponse"
 onsubmit="return showSummary(event)"
@@ -1032,7 +1031,8 @@ Aucune disponibilité ce jour
 </details>
 <!-- FIN SEMAINE 5 -->
 <br>
-<textarea name="entry.3333333333" placeholder="Commentaires"></textarea>
+<textarea id="comments" name="entry.3333333333" placeholder="Commentaires"></textarea>
+
 
 <br>
 <div class="actions">
@@ -1058,8 +1058,6 @@ max-height:80%;
 overflow:auto;
 ">
 
-<h2>Résumé avant envoi</h2>
-<div id="summaryContent"></div>
 
 <div style="margin-top:20px;display:flex;gap:10px;">
 <button type="button" onclick="confirmFinalSend()" style="flex:1;background:#2e7d32;color:white;padding:10px;border:none;border-radius:8px;">
@@ -1129,7 +1127,7 @@ html+="<strong>Email:</strong> "+document.querySelector('[name="entry.8888888888
 html+="<strong>Téléphone:</strong> "+document.querySelector('[name="entry.7777777777"]').value+"<br>";
 html+="<strong>Classement:</strong> "+document.querySelector('[name="entry.6666666666"]').value+"<br>";
 html+="<strong>Épreuve:</strong> "+document.querySelector('[name="entry.4444444444"]').value+"<br><br>";
-
+html+="<strong>Épreuve:</strong> "+document.querySelector('[name="entry.2222222222"]').value+"<br><br>";
 html+="<strong>Créneaux sélectionnés :</strong><br>";
 
 document.querySelectorAll('input[type=checkbox]:checked')
@@ -1150,6 +1148,68 @@ function confirmFinalSend(){
 document.getElementById("summaryBox").style.display="none";
 document.querySelector("form").submit();
 }
+</script>
+<script>
+
+/* AFFICHER RÉSUMÉ AU CLIC SUR ENVOYER */
+document.querySelector("form").addEventListener("submit",function(e){
+  e.preventDefault();
+  buildSummary();
+  document.getElementById("summaryBox").style.display="block";
+});
+
+/* CONSTRUCTION DU RÉSUMÉ */
+function buildSummary(){
+
+  let html="";
+
+  /* CRÉNEAUX COCHÉS */
+  const checked=document.querySelectorAll("input[type=checkbox]:checked");
+
+  if(checked.length>0){
+    html+="<p><strong>Créneaux sélectionnés :</strong><br>";
+    checked.forEach(cb=>{
+      html+=cb.value+"<br>";
+    });
+    html+="</p>";
+  }
+
+  /* COMMENTAIRES */
+  const comment=document.getElementById("comments").value.trim();
+  if(comment!==""){
+    html+="<hr><p><strong>Commentaires :</strong><br>"+comment+"</p>";
+  }
+
+  document.getElementById("summaryContent").innerHTML=html;
+}
+
+</script>
+<script>
+console.log("script chargé");
+
+function buildSummary(){
+
+  let html="";
+
+  const checked=document.querySelectorAll("input[type=checkbox]:checked");
+
+  html+="<p><strong>Créneaux :</strong></p>";
+
+  checked.forEach(cb=>{
+    html+=cb.value+"<br>";
+  });
+
+  const comment=document.getElementById("comments").value;
+  html+="<hr><p><strong>Commentaires :</strong><br>"+comment+"</p>";
+
+  document.getElementById("summaryContent").innerHTML=html;
+}
+
+document.querySelector("form").addEventListener("submit",function(e){
+  e.preventDefault();
+  buildSummary();
+  document.getElementById("summaryBox").style.display="block";
+});
 </script>
 
 </body>
