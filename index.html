@@ -218,6 +218,21 @@ cursor:pointer;
   background:#b71c1c;
 }
 
+.day-unavailable{
+  background:#e0e0e0;
+  color:#2e7d32;
+  border:none;
+  padding:6px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-bottom:8px;
+}
+
+.day-unavailable.active{
+  background:#2e7d32;
+  color:white;
+}
+
 </style>
 </head>
 
@@ -231,9 +246,10 @@ cursor:pointer;
 </header>
 
 <div class="explain">
-<strong>FORMULAIRE DE MODIFICATION DES DISPOS ANNONCEES DANS TENUP<br>
-Précisez vos nouvelles disponibilités en cochant les créneaux ou VOUS ETES LIBRES<br>
-En cas d'indisponibilté totale sur une journée, activez le bouton "aucune disponibilité ce jour"
+<strong>Cocher les cases où vous êtes libres</strong><br>
+Créneaux d’1h de 08h à 23h
+</div>
+
 <form method="POST"
 action="https://docs.google.com/forms/d/e/1FAIpQLSxxxxxxxxxxxx/formResponse"
 onsubmit="return showSummary(event)"
@@ -278,11 +294,9 @@ onsubmit="return showSummary(event)"
 
 <div class="day">
 <strong>Vendredi 19/06</strong>
-<button type="button" class="no-day-btn" onclick="clearDay(this)">
-Aucune disponibilité ce jour
-</button>
+
 <div class="slots">
-<label><input type="checkbox" name="entry.2222222222" value="Vendredi 08-09">08-09</label>
+<label><input type="checkbox" name="entry.2222222222" value="Vendredi 19/06 08-09">08-09</label>
 <label><input type="checkbox" name="entry.2222222222" value="Vendredi 09-10">09-10</label>
 <label><input type="checkbox" name="entry.2222222222" value="Vendredi 10-11">10-11</label>
 <label><input type="checkbox" name="entry.2222222222" value="Vendredi 11-12">11-12</label>
@@ -297,13 +311,13 @@ Aucune disponibilité ce jour
 <label><input type="checkbox" name="entry.2222222222" value="Vendredi 20-21">20-21</label>
 <label><input type="checkbox" name="entry.2222222222" value="Vendredi 21-22">21-22</label>
 <label><input type="checkbox" name="entry.2222222222" value="Vendredi 22-23">22-23</label>
+<button type="button" class="day-unavailable">Pas disponible ce jour</button>
+
 </div></div>
 
 <div class="day">
 <strong>Samedi 20/06</strong>
-<button type="button" class="no-day-btn" onclick="clearDay(this)">
-Aucune disponibilité ce jour
-</button>
+
 <div class="slots">
 <label><input type="checkbox" name="entry.2222222222" value="Samedi 08-09">08-09</label>
 <label><input type="checkbox" name="entry.2222222222" value="Samedi 09-10">09-10</label>
@@ -320,13 +334,13 @@ Aucune disponibilité ce jour
 <label><input type="checkbox" name="entry.2222222222" value="Samedi 20-21">20-21</label>
 <label><input type="checkbox" name="entry.2222222222" value="Samedi 21-22">21-22</label>
 <label><input type="checkbox" name="entry.2222222222" value="Samedi 22-23">22-23</label>
+<button type="button" class="day-unavailable">Pas disponible ce jour</button>
+
 </div></div>
 
 <div class="day">
 <strong>Dimanche 21/06</strong>
-<button type="button" class="no-day-btn" onclick="clearDay(this)">
-Aucune disponibilité ce jour
-</button>
+<
 <div class="slots">
 <label><input type="checkbox" name="entry.2222222222" value="Dimanche 08-09">08-09</label>
 <label><input type="checkbox" name="entry.2222222222" value="Dimanche 09-10">09-10</label>
@@ -343,6 +357,8 @@ Aucune disponibilité ce jour
 <label><input type="checkbox" name="entry.2222222222" value="Dimanche 20-21">20-21</label>
 <label><input type="checkbox" name="entry.2222222222" value="Dimanche 21-22">21-22</label>
 <label><input type="checkbox" name="entry.2222222222" value="Dimanche 22-23">22-23</label>
+<button type="button" class="day-unavailable">Pas disponible ce jour</button>
+
 </div></div>
 </details>
 <!-- FIN SEMAINE 1 -->
@@ -1032,6 +1048,8 @@ Aucune disponibilité ce jour
 <!-- FIN SEMAINE 5 -->
 <br>
 <textarea id="comments" name="entry.3333333333" placeholder="Commentaires"></textarea>
+
+
 <br>
 <div class="actions">
 <button type="reset" class="reset">Réinitialiser</button>
@@ -1056,6 +1074,8 @@ max-height:80%;
 overflow:auto;
 ">
 
+<h2>Résumé avant envoi</h2>
+<div id="summaryContent"></div>
 
 <div style="margin-top:20px;display:flex;gap:10px;">
 <button type="button" onclick="confirmFinalSend()" style="flex:1;background:#2e7d32;color:white;padding:10px;border:none;border-radius:8px;">
@@ -1125,7 +1145,8 @@ html+="<strong>Email:</strong> "+document.querySelector('[name="entry.8888888888
 html+="<strong>Téléphone:</strong> "+document.querySelector('[name="entry.7777777777"]').value+"<br>";
 html+="<strong>Classement:</strong> "+document.querySelector('[name="entry.6666666666"]').value+"<br>";
 html+="<strong>Épreuve:</strong> "+document.querySelector('[name="entry.4444444444"]').value+"<br><br>";
-html+="<strong>Épreuve:</strong> "+document.querySelector('[name="entry.2222222222"]').value+"<br><br>";
+html+="<strong>Commentaires:</strong> "+document.querySelector('[name="entry.3333333333"]').value+"<br>";
+
 html+="<strong>Créneaux sélectionnés :</strong><br>";
 
 document.querySelectorAll('input[type=checkbox]:checked')
@@ -1149,37 +1170,63 @@ document.querySelector("form").submit();
 </script>
 <script>
 
-/* AFFICHER RÉSUMÉ AU CLIC SUR ENVOYER */
+console.log("JS OK");
+
+/* ----- BOUTON PAS DISPO JOUR ----- */
+document.querySelectorAll(".day-unavailable").forEach(btn=>{
+  btn.addEventListener("click",function(){
+
+    this.classList.toggle("active");
+
+    const day=this.closest(".day");
+
+    day.querySelectorAll("input[type=checkbox]").forEach(cb=>{
+      cb.checked=false;
+    });
+
+  });
+});
+
+/* ----- RÉSUMÉ ----- */
+function buildSummary(){
+
+  let html="";
+
+  document.querySelectorAll(".day").forEach(day=>{
+
+    const title=day.querySelector("h3").innerText;
+    const unavailable=day.querySelector(".day-unavailable").classList.contains("active");
+    const checked=day.querySelectorAll("input[type=checkbox]:checked");
+
+    if(unavailable){
+      html+="<p><strong>"+title+"</strong><br>Aucune disponibilité</p>";
+    }
+    else if(checked.length>0){
+      html+="<p><strong>"+title+"</strong><br>";
+      checked.forEach(cb=>{
+        html+=cb.value.split(" ").pop()+" ";
+      });
+      html+="</p>";
+    }
+
+  });
+
+  const comment=document.querySelector("#comments").value;
+  html+="<hr><p><strong>Commentaires :</strong><br>"+comment+"</p>";
+
+  document.getElementById("summaryContent").innerHTML=html;
+}
+
+/* ----- AFFICHER RÉSUMÉ ----- */
 document.querySelector("form").addEventListener("submit",function(e){
   e.preventDefault();
   buildSummary();
   document.getElementById("summaryBox").style.display="block";
 });
 
-/* CONSTRUCTION DU RÉSUMÉ */
-function buildSummary(){
-
-  let html="";
-
-  /* CRÉNEAUX COCHÉS */
-  const checked=document.querySelectorAll("input[type=checkbox]:checked");
-
-  if(checked.length>0){
-    html+="<p><strong>Créneaux sélectionnés :</strong><br>";
-    checked.forEach(cb=>{
-      html+=cb.value+"<br>";
-    });
-    html+="</p>";
-  }
-
-  /* COMMENTAIRES */
- const comment = document.querySelector("#comments").value;
-
-if(comment.trim() !== ""){
-  html += "<hr><p><strong>Commentaires :</strong><br>" + comment + "</p>";
-}
-
 </script>
+
+
 
 
 </body>
