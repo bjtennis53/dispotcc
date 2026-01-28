@@ -1191,7 +1191,8 @@ function buildSummary(){
 
     	const title = day.getAttribute("data-day");
 
-    const unavailable=day.querySelector(".day-unavailable").classList.contains("active");
+    	const unavailable = day.querySelector(".day-unavailable")?.classList.contains("active") || false;
+
     const checked=day.querySelectorAll("input[type=checkbox]:checked");
 
     if(unavailable){
