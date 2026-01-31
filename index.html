@@ -217,46 +217,20 @@ cursor:pointer;
 .no-day-btn:hover{
   background:#b71c1c;
 }
-
-.day-unavailable{
-  background:#e0e0e0;
-  color:#2e7d32;
-  border:none;
-  padding:6px 12px;
-  border-radius:8px;
-  cursor:pointer;
-  margin-bottom:8px;
-}
-
 .day-unavailable.active{
-  background:#2e7d32;
+  background:#c62828;
   color:white;
-}
-#summaryBox{
-  width:100%;
-  max-width:650px;
-  margin-left:auto !important;
-  margin-right:auto !important;
-  margin-top:30px;
-  margin-bottom:30px;
-  display:block;
-  background:#f1f8e9;
-  border-radius:16px;
-  padding:25px;
-  box-shadow:0 6px 18px rgba(0,0,0,0.2);
 }
 
 </style>
 </head>
 
+<!--XXXXXXXXXXXXXXXXXXXXXX-->
 <body>
+<!--XXXXXXXXXXXXXXXXXXXXXX-->
 
 <div class="container">
-
-<header>
-
-<h1>OPEN TENNIS CLUB CHARBONNIERES 2026</h1>
-</header>
+<header><h1>OPEN TENNIS CLUB CHARBONNIERES 2026</h1></header>
 
 <div class="explain">
 <strong>Cocher les cases où vous êtes libres</strong><br>
@@ -371,6 +345,7 @@ onsubmit="return showSummary(event)"
 </details>
 <!-- FIN SEMAINE 1 -->
 <br>
+
 
 <!-- SEMAINE 2 -->
 <!-- SEMAINE 2 -->
@@ -997,11 +972,14 @@ onsubmit="return showSummary(event)"
 </div></div>
 </details>
 <!-- FIN SEMAINE 5 -->
+
+
 <br>
 <textarea id="comments" name="entry.3333333333" placeholder="Commentaires"></textarea>
 
 
 <br>
+
 <div class="actions">
 <button type="reset" class="reset">Réinitialiser</button>
 <button type="submit" class="submit">Envoyer</button>
@@ -1015,7 +993,6 @@ z-index:9999;
 justify-content:center;
 align-items:center;">
 
-
 <div style="
 background:white;
 padding:25px;
@@ -1026,18 +1003,24 @@ max-height:80%;
 overflow:auto;
 ">
 
-<h2>Résumé avant envoi</h2>
-<div id="summaryContent"></div>
+<div id="summaryBox">
+  <h3>Résumé avant validation</h3>
+  <div id="summaryContent"></div>
 
-<div style="margin-top:20px;display:flex;gap:10px;">
-<button type="button" onclick="confirmFinalSend()" style="flex:1;background:#2e7d32;color:white;padding:10px;border:none;border-radius:8px;">
-Confirmer
-</button>
+  <div style="margin-top:20px;display:flex;gap:15px;">
+    <button type="button" onclick="confirmFinalSend()" 
+      style="flex:1;background:#2e7d32;color:white;border:none;padding:12px;border-radius:8px;">
+      Confirmer l’envoi
+    </button>
 
-<button type="button" onclick="closeSummary()" style="flex:1;background:#c62828;color:white;padding:10px;border:none;border-radius:8px;">
-Annuler
-</button>
+    <button type="button" onclick="closeSummary()" 
+      style="flex:1;background:#c62828;color:white;border:none;padding:12px;border-radius:8px;">
+      Annuler
+    </button>
+  </div>
 </div>
+
+
 
 </div>
 </div>
@@ -1047,140 +1030,123 @@ Annuler
 </div>
 
 <script>
-function openAll(){
-document.querySelectorAll("details").forEach(d=>d.open=true);
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+/* ----------------------------
+  OUVRIR / FERMER ACCORDÉONS
+-----------------------------*/
+window.openAll = function(){
+  document.querySelectorAll("details").forEach(d=>d.open=true);
 }
-function closeAll(){
-document.querySelectorAll("details").forEach(d=>d.open=false);
-}
-function confirmSend(){
-alert("Merci ! Vos disponibilités ont été envoyées.");
-return true;
-}
-</script>
-<script>
-function clearDay(btn){
-  const dayBlock = btn.closest(".day");
-
-  dayBlock.querySelectorAll("input[type=checkbox]")
-          .forEach(cb => cb.checked = false);
-
-  btn.classList.toggle("active");
-}
-</script>
-
-
-
-<script>
-function updateDayButton(dayBlock){
-  const btn = dayBlock.querySelector(".no-day-btn");
-  const checked = dayBlock.querySelectorAll("input[type=checkbox]:checked").length;
-
-  if(checked === 0){
-    btn.classList.add("active");
-  }else{
-    btn.classList.remove("active");
-  }
+window.closeAll = function(){
+  document.querySelectorAll("details").forEach(d=>d.open=false);
 }
 
-</script>
-
-
-
-<script>
-function showSummary(e){
-e.preventDefault();
-
-let html="<strong>Nom:</strong> "+document.querySelector('[name="entry.1111111111"]').value+"<br>";
-html+="<strong>Prénom:</strong> "+document.querySelector('[name="entry.5555555555"]').value+"<br>";
-html+="<strong>Email:</strong> "+document.querySelector('[name="entry.8888888888"]').value+"<br>";
-html+="<strong>Téléphone:</strong> "+document.querySelector('[name="entry.7777777777"]').value+"<br>";
-html+="<strong>Classement:</strong> "+document.querySelector('[name="entry.6666666666"]').value+"<br>";
-html+="<strong>Épreuve:</strong> "+document.querySelector('[name="entry.4444444444"]').value+"<br><br>";
-html+="<strong>Commentaires:</strong> "+document.querySelector('[name="entry.3333333333"]').value+"<br>";
-
-html+="<strong>Créneaux sélectionnés :</strong><br>";
-
-document.querySelectorAll('input[type=checkbox]:checked')
-.forEach(cb=>{
-html+="• "+cb.value+"<br>";
-});
-
-document.getElementById("summaryContent").innerHTML=html;
-document.getElementById("summaryBox").style.display="flex";
-return false;
-}
-
-function closeSummary(){
-document.getElementById("summaryBox").style.display="none";
-}
-
-function confirmFinalSend(){
-document.getElementById("summaryBox").style.display="none";
-document.querySelector("form").submit();
-}
-</script>
-<script>
-
-console.log("JS OK");
-
-/* ----- BOUTON PAS DISPO JOUR ----- */
+/* ----------------------------
+  BOUTON PAS DISPONIBLE JOUR
+-----------------------------*/
 document.querySelectorAll(".day-unavailable").forEach(btn=>{
   btn.addEventListener("click",function(){
 
-    this.classList.toggle("active");
-
     const day=this.closest(".day");
+    const checkboxes=day.querySelectorAll("input[type=checkbox]");
 
-    day.querySelectorAll("input[type=checkbox]").forEach(cb=>{
-      cb.checked=false;
-    });
+    if(this.classList.contains("active")){
+      this.classList.remove("active");
+      checkboxes.forEach(cb=>cb.disabled=false);
+    }else{
+      this.classList.add("active");
+      checkboxes.forEach(cb=>{
+        cb.checked=false;
+        cb.disabled=true;
+      });
+    }
 
+    buildSummary();
   });
 });
 
-/* ----- RÉSUMÉ ----- */
-function buildSummary(){
+/* ----------------------------
+  SI ON COCHE UN CRÉNEAU
+-----------------------------*/
+document.querySelectorAll("input[type=checkbox]").forEach(cb=>{
+  cb.addEventListener("change",function(){
+    const day=this.closest(".day");
+    const btn=day.querySelector(".day-unavailable");
+    if(btn){
+      btn.classList.remove("active");
+      day.querySelectorAll("input[type=checkbox]").forEach(c=>c.disabled=false);
+    }
+    buildSummary();
+  });
+});
+
+/* ----------------------------
+  RÉSUMÉ
+-----------------------------*/
+window.buildSummary=function(){
 
   let html="";
 
   document.querySelectorAll(".day").forEach(day=>{
 
-    	const title = day.getAttribute("data-day");
-
-    	const unavailable = day.querySelector(".day-unavailable")?.classList.contains("active") || false;
-
-    const checked=day.querySelectorAll("input[type=checkbox]:checked");
+    const title=day.querySelector("h3").innerText;
+    const slots=day.querySelectorAll("input[type=checkbox]:checked");
+    const unavailable=day.querySelector(".day-unavailable").classList.contains("active");
 
     if(unavailable){
-      html+="<p><strong>"+title+"</strong><br>Aucune disponibilité</p>";
+      html+=`<p><strong>${title}</strong><br>Aucune disponibilité</p>`;
     }
-    else if(checked.length>0){
-      html+="<p><strong>"+title+"</strong><br>";
-      checked.forEach(cb=>{
-        html+=cb.value.split(" ").pop()+" ";
+    else if(slots.length>0){
+      html+=`<p><strong>${title}</strong><br>`;
+      slots.forEach(s=>{
+        html+=s.value.split(" ").pop()+" ";
       });
       html+="</p>";
     }
 
   });
 
-  const comment=document.querySelector("#comments").value;
-  html+="<hr><p><strong>Commentaires :</strong><br>"+comment+"</p>";
+  const comments=document.getElementById("comments").value.trim();
+  if(comments!==""){
+    html+=`<hr><p><strong>Commentaires :</strong><br>${comments}</p>`;
+  }
 
   document.getElementById("summaryContent").innerHTML=html;
 }
 
-/* ----- AFFICHER RÉSUMÉ ----- */
-document.querySelector("form").addEventListener("submit",function(e){
+/* ----------------------------
+  AFFICHAGE POPUP
+-----------------------------*/
+window.showSummary=function(e){
   e.preventDefault();
   buildSummary();
-  document.getElementById("summaryBox").style.display="block";
+  document.getElementById("summaryBox").style.display="flex";
+  return false;
+}
+
+window.closeSummary=function(){
+  document.getElementById("summaryBox").style.display="none";
+}
+
+
+window.confirmFinalSend=function(){
+  closeSummary();
+  document.querySelector("form").submit();
+  setTimeout(()=>{
+    alert(
+"✅ Merci pour votre inscription !\n\n" +
+"Vos disponibilités ont bien été enregistrées pour l’Open Tennis Club Charbonnières 2026.\n\n" +
+"Nous vous recontacterons prochainement pour la planification de vos matchs.\n\n" +
+"À très bientôt sur les courts 🎾"
+);
+;
+  },500);
+}
 });
 
 </script>
-
-
 
 
 </body>
