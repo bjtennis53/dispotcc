@@ -1,8 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>OPEN TENNIS CLUB CHARBONNIERES</title>
+<header class="logo-header">
+  <img src="tcc.png" alt="Logo club">
+ </header>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -26,10 +30,11 @@ box-shadow:0 0 20px rgba(0,0,0,0.15);
 }
 
 /* LOGO */
-.logo{
-text-align:center;
-margin-bottom:10px;
+.logo-header{
+  text-align:center;
+  margin-bottom:15px;
 }
+
 .logo img{
 max-width:140px;
 }
@@ -196,30 +201,32 @@ cursor:pointer;
   transform:scale(1.05);
 }
 
-.no-day-btn{
-  background:#e0e0e0;
-  color:#444;
-  border:none;
-  padding:6px 12px;
-  border-radius:6px;
-  font-size:13px;
+/* BOUTON PAS DISPONIBLE = MEME STYLE QUE CRENEAUX */
+
+.day-unavailable{
+  background:#e8f5e9;
+  border:2px solid #66bb6a;
+  border-radius:10px;
+  padding:8px 5px;
+  text-align:center;
   cursor:pointer;
-  margin:6px 0 10px 0;
+  font-size:14px;
+  font-weight:500;
+  user-select:none;
   transition:0.2s;
+  margin-bottom:8px;
+  width:100%;
 }
 
-.no-day-btn.active{
-  background:#c62828;
-  color:white;
+.day-unavailable:hover{
+  background:#c8e6c9;
 }
 
-
-.no-day-btn:hover{
-  background:#b71c1c;
-}
 .day-unavailable.active{
-  background:#c62828;
+  background:#2e7d32;
   color:white;
+  border-color:#1b5e20;
+  transform:scale(1.05);
 }
 
 </style>
@@ -233,8 +240,9 @@ cursor:pointer;
 <header><h1>OPEN TENNIS CLUB CHARBONNIERES 2026</h1></header>
 
 <div class="explain">
-<strong>Cocher les cases où vous êtes libres</strong><br>
-Créneaux d’1h de 08h à 23h
+<strong>MODIFICATIONS DE VOS DISPONIBILITES REPERTORIEES LORS DE VOTRE INSCRIPTION AVEC TENUP<br>
+Cocher les créneaux horaires où vous êtes réellement libres</strong><br>
+Pour plus de précisions, pensez à remplir la zone "commentaires"
 </div>
 
 <form method="POST"
@@ -259,12 +267,13 @@ onsubmit="return showSummary(event)"
 <option>2/6</option><option>1/6</option><option>0</option>
 <option>-2/6</option><option>-4/6</option><option>-15</option>
 </select>
-
 <select name="entry.4444444444" required>
 <option value="">-- Choisir --</option>
 <option>Simple Messieurs</option>
+<option>Simple Messieurs +35 ans</option>
+<option>Simple Messieurs +60 ans</option>
 <option>Simple Dames</option>
-<option>Double</option>
+<option>Simple Dames +35 ans</option>
 </select>
 
 <div class="accordion-controls">
@@ -276,11 +285,12 @@ onsubmit="return showSummary(event)"
 <br>
 <!-- SEMAINE 1 -->
 <details>
-<summary>📅 Semaine 1</summary>
+<summary>📅 SEMAINE 1</summary>
 <!--XXXXXXXXXXXXXXXXXXXXXX-->
 <div class="day" data-day="Vendredi 19 juin">
   <h3>Vendredi 19 juin</h3>
   <button type="button" class="day-unavailable">Pas disponible ce jour</button>
+
 <div class="slots">
 <label><input type="checkbox" name="entry.2222222222" value="Vendredi 19/06 08-09">08-09</label>
 <label><input type="checkbox" name="entry.2222222222" value="Vendredi 19/06 09-10">09-10</label>
@@ -352,7 +362,7 @@ onsubmit="return showSummary(event)"
 <!-- SEMAINE 2 -->
 
 <details>
-<summary>📅 Semaine 2</summary>
+<summary>📅 SEMAINE 2</summary>
 
 
 <div class="day" data-day="Lundi 22 juin">
@@ -511,7 +521,7 @@ onsubmit="return showSummary(event)"
 <!-- SEMAINE 3 -->
 
 <details>
-<summary>📅 Semaine 3</summary>
+<summary>📅 SEMAINE 3</summary>
 <div class="day" data-day="Lundi 29 juin">
   <h3>Lundi 29 juin</h3>
   <button type="button" class="day-unavailable">Pas disponible ce jour</button>
@@ -667,7 +677,7 @@ onsubmit="return showSummary(event)"
 
 
 <details>
-<summary>📅 Semaine 4</summary>
+<summary>📅 SEMAINE 4</summary>
 <div class="day" data-day="Lundi 06 juillet">
   <h3>Lundi 06 juillet</h3>
   <button type="button" class="day-unavailable">Pas disponible ce jour</button>
@@ -823,7 +833,7 @@ onsubmit="return showSummary(event)"
 <!-- SEMAINE 5 -->
 
 <details>
-<summary>📅 Semaine 5</summary>
+<summary>📅 SEMAINE 5</summary>
 
 <div class="day" data-day="Lundi 13 juillet">
   <h3>Lundi 13 juillet</h3>
@@ -1006,7 +1016,7 @@ overflow:auto;
 <div id="summaryBox">
   <h3>Résumé avant validation</h3>
   <div id="summaryContent"></div>
-
+  
   <div style="margin-top:20px;display:flex;gap:15px;">
     <button type="button" onclick="confirmFinalSend()" 
       style="flex:1;background:#2e7d32;color:white;border:none;padding:12px;border-radius:8px;">
