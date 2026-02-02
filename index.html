@@ -1,6 +1,8 @@
 
 <!DOCTYPE html>
 <html lang="fr">
+<!--Bernard Joffraud-->
+<!--Version 1.0-->
 <head>
 <meta charset="UTF-8">
 <header class="logo-header">
@@ -29,14 +31,21 @@ border-radius:20px;
 box-shadow:0 0 20px rgba(0,0,0,0.15);
 }
 
-/* LOGO */
 .logo-header{
-  text-align:center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
   margin-bottom:15px;
 }
 
-.logo img{
-max-width:140px;
+.logo-header img{
+  max-width:160px;
+  width:100%;
+  height:auto;
+  aspect-ratio: 1 / 1;
+  object-fit:contain;
+}
+
 }
 
 /* TITRE */
@@ -237,7 +246,9 @@ cursor:pointer;
 <!--XXXXXXXXXXXXXXXXXXXXXX-->
 
 <div class="container">
-<header><h1>OPEN TENNIS CLUB CHARBONNIERES 2026</h1></header>
+<header><h1>OPEN TENNIS CLUB CHARBONNIERES 2026<br>
+du 19 Juin au 19 Juillet</h1
+</header>
 
 <div class="explain">
 <strong>MODIFICATIONS DE VOS DISPONIBILITES REPERTORIEES LORS DE VOTRE INSCRIPTION AVEC TENUP<br>
@@ -357,8 +368,6 @@ onsubmit="return showSummary(event)"
 <br>
 
 
-<!-- SEMAINE 2 -->
-<!-- SEMAINE 2 -->
 <!-- SEMAINE 2 -->
 
 <details>
@@ -1095,6 +1104,10 @@ document.querySelectorAll("input[type=checkbox]").forEach(cb=>{
 /* ----------------------------
   RÉSUMÉ
 -----------------------------*/
+function wrapText50(text){
+  return text.match(/.{1,50}/g)?.join("<br>") || "";
+}
+
 window.buildSummary=function(){
 
   let html="";
@@ -1119,9 +1132,10 @@ window.buildSummary=function(){
   });
 
   const comments=document.getElementById("comments").value.trim();
-  if(comments!==""){
-    html+=`<hr><p><strong>Commentaires :</strong><br>${comments}</p>`;
-  }
+if(comments!==""){
+  html+=`<hr><p><strong>Commentaires :</strong><br>${wrapText50(comments)}</p>`;
+}
+
 
   document.getElementById("summaryContent").innerHTML=html;
 }
