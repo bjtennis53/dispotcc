@@ -1,1200 +1,317 @@
-
 <!DOCTYPE html>
 <html lang="fr">
-<!--Bernard Joffraud-->
-<!--Version 1.0-->
 <head>
 <meta charset="UTF-8">
-<header class="logo-header">
-  <img src="tcc.png" alt="Logo club">
- </header>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<title>Modification de disponibilités</title>
 
 <style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 700px;
+    margin: 20px auto;
+    padding-bottom: 100px;
+  }
 
-body{
-font-family:Roboto, sans-serif;
-background:#e8f5e9;
-margin:0;
-padding:0;
-}
+  h2 { margin-top: 30px; }
 
-.container{
-max-width:900px;
-margin:auto;
-background:white;
-padding:25px;
-border-radius:20px;
-box-shadow:0 0 20px rgba(0,0,0,0.15);
-}
+  label {
+    font-weight: bold;
+    display: block;
+    margin-top: 12px;
+  }
 
-.logo-header{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin-bottom:15px;
-}
+  input, textarea {
+    width: 100%;
+    padding: 6px;
+    margin-top: 4px;
+  }
 
-.logo-header img{
-  max-width:160px;
-  width:100%;
-  height:auto;
-  aspect-ratio: 1 / 1;
-  object-fit:contain;
-}
+  textarea { resize: vertical; }
 
-}
+  .info {
+    background: #eef;
+    padding: 10px;
+    border-left: 4px solid #3366cc;
+    margin-bottom: 20px;
+  }
 
-/* TITRE */
-h1{
-text-align:center;
-color:#1b5e20;
-margin-top:5px;
-}
+  .slots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-top: 10px;
+  }
 
-/* TEXTE EXPLICATION */
-.explain{
-background:#c8e6c9;
-padding:12px;
-border-radius:10px;
-text-align:center;
-font-weight:600;
-margin-bottom:20px;
-}
+  .slot-btn {
+    padding: 8px;
+    background: #2ecc71;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
-/* FORM */
-label{font-weight:500;}
-input,select,textarea{
-width:100%;
-padding:10px;
-margin-top:5px;
-border-radius:8px;
-border:1px solid #66bb6a;
-}
+  .slot-btn.active {
+    background: #e74c3c;
+  }
 
-input:required,select:required{
-border-left:5px solid #2e7d32;
-}
+  .slot-btn:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+  }
 
-textarea{resize:vertical;}
+  .day-off {
+    margin-top: 10px;
+    padding: 10px;
+    background: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
 
-.row{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-}
+  .day-off.active {
+    background: red;
+  }
 
-/* CRENEAUX */
-details{
-background:#f1f8e9;
-border-radius:12px;
-padding:10px;
-margin-bottom:15px;
-}
+  .hidden { display: none; }
 
-summary{
-font-size:18px;
-font-weight:700;
-color:#1b5e20;
-cursor:pointer;
-}
+  ul { padding-left: 20px; }
 
-.time-block h3{
-color:#2e7d32;
-margin:10px 0;
-}
+  /* BARRE D’ACTIONS FIXE */
+  .action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 2px solid #3366cc;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    z-index: 1000;
+  }
 
-.slots-grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
-gap:10px;
-}
-
-.slot{
-background:#e8f5e9;
-border:2px solid #66bb6a;
-border-radius:12px;
-padding:10px;
-text-align:center;
-cursor:pointer;
-font-weight:500;
-}
-
-.slot input{display:none;}
-
-.slot:has(input:checked){
-background:#2e7d32;
-color:white;
-border-color:#1b5e20;
-}
-
-/* BOUTONS */
-.buttons{
-display:flex;
-gap:15px;
-margin-top:25px;
-}
-
-.submit-btn{
-flex:1;
-background:#2e7d32;
-color:white;
-border:none;
-padding:14px;
-font-size:16px;
-border-radius:10px;
-cursor:pointer;
-}
-
-.reset-btn{
-flex:1;
-background:#c62828;
-color:white;
-border:none;
-padding:14px;
-font-size:16px;
-border-radius:10px;
-cursor:pointer;
-}
-
-@media(max-width:600px){
-.row{grid-template-columns:1fr;}
-}
-
-/* ===== NOUVELLE PRESENTATION MODERNE DES CRENEAUX ===== */
-
-.day{
-  margin-top:18px;
-}
-
-.day strong{
-  display:block;
-  margin-bottom:8px;
-  color:#1b5e20;
-  font-size:16px;
-}
-
-.slots{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(75px,1fr));
-  gap:8px;
-}
-
-.slots input{
-  position:absolute;
-  opacity:0;
-  pointer-events:none;
-}
-
-
-.slots label{
-  background:#e8f5e9;
-  border:2px solid #66bb6a;
-  border-radius:10px;
-  padding:8px 5px;
-  text-align:center;
-  cursor:pointer;
-  font-size:14px;
-  user-select:none;
-  transition:0.2s;
-}
-
-.slots label:hover{
-  background:#c8e6c9;
-}
-
-.slots label:has(input:checked){
-  background:#2e7d32;
-  color:white;
-  border-color:#1b5e20;
-  transform:scale(1.05);
-}
-
-/* BOUTON PAS DISPONIBLE = MEME STYLE QUE CRENEAUX */
-
-.day-unavailable{
-  background:#e8f5e9;
-  border:2px solid #66bb6a;
-  border-radius:10px;
-  padding:8px 5px;
-  text-align:center;
-  cursor:pointer;
-  font-size:14px;
-  font-weight:500;
-  user-select:none;
-  transition:0.2s;
-  margin-bottom:8px;
-  width:100%;
-}
-
-.day-unavailable:hover{
-  background:#c8e6c9;
-}
-
-.day-unavailable.active{
-  background:#2e7d32;
-  color:white;
-  border-color:#1b5e20;
-  transform:scale(1.05);
-}
-
+  #resume {
+    background: #f9f9ff;
+    border: 2px solid #3366cc;
+    padding: 15px;
+    margin-top: 30px;
+  }
 </style>
 </head>
 
-<!--XXXXXXXXXXXXXXXXXXXXXX-->
 <body>
-<!--XXXXXXXXXXXXXXXXXXXXXX-->
 
-<div class="container">
-<header><h1>OPEN TENNIS CLUB CHARBONNIERES 2026<br>
-du 19 Juin au 19 Juillet</h1
-</header>
+<h1>Modification de disponibilités</h1>
 
-<div class="explain">
-<strong>MODIFICATIONS DE VOS DISPONIBILITES REPERTORIEES LORS DE VOTRE INSCRIPTION AVEC TENUP<br>
-Cocher les créneaux horaires où vous êtes réellement libres</strong><br>
-Pour plus de précisions, pensez à remplir la zone "commentaires"
+<div class="info" id="tournamentInfo"></div>
+
+<h2>Identité</h2>
+
+<label>Nom</label>
+<input id="nom">
+
+<label>Prénom</label>
+<input id="prenom">
+
+<label>Numéro de licence</label>
+<input id="licence">
+
+<label>Téléphone</label>
+<input id="telephone">
+
+<label>Commentaires</label>
+<textarea id="commentaires" rows="4"></textarea>
+
+<h2>Date à modifier</h2>
+
+<input type="date" id="date">
+
+<button class="day-off" id="dayOffBtn">
+  PAS DISPONIBLE CE JOUR
+</button>
+
+<div class="slots" id="slots"></div>
+
+<!-- BARRE DE COMMANDES -->
+<div class="action-bar">
+  <button onclick="validerJournee()">Valider la journée</button>
+  <button id="btnNouvelle" class="hidden" onclick="nouvelleJournee()">Saisir une autre date</button>
+  <button id="btnTerminer" class="hidden" onclick="terminer()">Saisie terminée</button>
 </div>
 
-<form method="POST"
-action="https://docs.google.com/forms/d/e/1FAIpQLSeBTGN8Xh-IezWkZWVZhnGZb0sVvzDj36nUU7SxysAh3AMKtQ/formResponse"
-onsubmit="return showSummary(event)"
+<!-- RÉSUMÉ -->
+<div id="resume" class="hidden">
+  <h2>Résumé avant envoi</h2>
+  <ul id="resumeList"></ul>
 
-
-<div class="row">
-<input name="entry.1011381362" placeholder="Nom *" required>
-<input name="entry.443439976" placeholder="Prénom *" required>
-<input type="email" name="entry.2018417179" placeholder="Email *" required>
-<input pattern="[0-9]{10}" name="entry.1216877786" placeholder="Téléphone *" required>
-
-<select name="entry.811771832" required>
-<option value="">Classement *</option>
-<option>NC</option><option>40</option><option>30/5</option>
-<option>30/4</option><option>30/3</option><option>30/2</option>
-<option>30/1</option><option>30</option>
-<option>15/5</option><option>15/4</option><option>15/3</option>
-<option>15/2</option><option>15/1</option><option>15</option>
-<option>5/6</option><option>4/6</option><option>3/6</option>
-<option>2/6</option><option>1/6</option><option>0</option>
-<option>-2/6</option><option>-4/6</option><option>-15</option>
-</select>
-<select name="entry.693555113" required>
-<option value="">-- Choisir --</option>
-<option>Simple Messieurs</option>
-<option>Simple Messieurs +35 ans</option>
-<option>Simple Messieurs +60 ans</option>
-<option>Simple Dames</option>
-<option>Simple Dames +35 ans</option>
-</select>
-
-<div class="accordion-controls">
-<button type="button" onclick="openAll()">Tout ouvrir</button>
-<button type="button" onclick="closeAll()">Tout fermer</button>
-</div>
-
-
-<br>
-<!-- SEMAINE 1 -->
-<details>
-<summary>📅 SEMAINE 1</summary>
-<!--XXXXXXXXXXXXXXXXXXXXXX-->
-<div class="day" data-day="Vendredi 19 juin">
-  <h3>Vendredi 19 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-
-<div class="slots">
-
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 08-09">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 19/06 22-23">22-23</label>
-
-</div></div>
-<!--XXXXXXXXXXXXXXXXXXXXXX-->
-<div class="day" data-day="Samedi 20 juin">
-  <h3>Samedi 20 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 20/06 22-23">22-23</label>
-</div></div>
-<!--XXXXXXXXXXXXXXXXXXXXXX-->
-<div class="day" data-day="Dimanche 21 juin">
-  <h3>Dimanche 21 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 21/06 22-23">22-23</label>
-</div></div>
-<!--XXXXXXXXXXXXXXXXXXXXXX-->
-</details>
-<!-- FIN SEMAINE 1 -->
-<br>
-
-
-<!-- SEMAINE 2 -->
-
-<details>
-<summary>📅 SEMAINE 2</summary>
-
-
-<div class="day" data-day="Lundi 22 juin">
-  <h3>Lundi 22 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 22/06 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Mardi 23 juin">
-  <h3>Mardi 23 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 8-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 23/06 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Mercredi 24 juin">
-  <h3>Mercredi 24 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 1-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 24/06 22-23">22-23</label>
-</div></div>
-
-  <div class="day" data-day="Jeudi 25 juin">
-  <h3>Jeudi 25 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 25/06 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Vendredi 26 juin">
-  <h3>Vendredi 26 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 26/06 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Samedi 27 juin">
-  <h3>Samedi 27 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 27/06 22-23">22-23</label>
-</div></div>
-
- <div class="day" data-day="Dimanche 28 juin">
-  <h3>Dimanche 28 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 28/06 22-23">22-23</label>
-</div></div>
-</details>
-
-<!-- FIN SEMAINE 2 -->
-<br>
-<!-- SEMAINE 3 -->
-<!-- SEMAINE 3 -->
-<!-- SEMAINE 3 -->
-
-<details>
-<summary>📅 SEMAINE 3</summary>
-<div class="day" data-day="Lundi 29 juin">
-  <h3>Lundi 29 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 29/06 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Mardi 30 juin">
-  <h3>Mardi 30 juin</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 30/06 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Mercredi 01 juillet">
-  <h3>Mercredi 01 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 01/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Jeudi 02 juillet">
-  <h3>Jeudi 02 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 02/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Vendredi 03 juillet">
-  <h3>Vendredi 03 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 03/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Samedi 04 juillet">
-  <h3>Samedi 04 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 04/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Dimanche 05 juillet">
-  <h3>Dimanche 05 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 05/07 22-23">22-23</label>
-</div></div>
-</details>
-<!-- FIN SEMAINE 3 -->
-<br>
-<!-- SEMAINE 4 -->
-<!-- SEMAINE 4 -->
-<!-- SEMAINE 4 -->
-
-
-<details>
-<summary>📅 SEMAINE 4</summary>
-<div class="day" data-day="Lundi 06 juillet">
-  <h3>Lundi 06 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 5-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 06/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Mardi 07 juillet">
-  <h3>Mardi 07 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 07/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Mercredi 08 juillet">
-  <h3>Mercredi 08 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 08/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Jeudi 09 juillet">
-  <h3>Jeudi 09 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 09/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Vendredi 10 juillet">
-  <h3>Vendredi 10 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 10/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Samedi 11 juillet">
-  <h3>Samedi 11 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 -09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 3-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 11/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Dimanche 12 juillet">
-  <h3>Dimanche 12 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 12/07 22-23">22-23</label>
-</div></div>
-</details>
-<!-- FIN SEMAINE 4 -->
-<br>
-<!-- SEMAINE 5 -->
-<!-- SEMAINE 5 -->
-<!-- SEMAINE 5 -->
-
-<details>
-<summary>📅 SEMAINE 5</summary>
-
-<div class="day" data-day="Lundi 13 juillet">
-  <h3>Lundi 13 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Lundi 13/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Mardi 14 juillet">
-  <h3>Mardi 14 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Mardi 14/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Mercredi 15 juillet">
- <h3>Mercredi 15 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button> 
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Mercredi 15/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Jeudi 16 juillet">
-  <h3>Jeudi 16 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Jeudi 16/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Vendredi 17 juillet">
-  <h3>Vendredi 17 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Vendredi 17/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Samedi 18 juillet">
-  <h3>Samedi 18 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 15-16">l5-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Samedi 18/07 22-23">22-23</label>
-</div></div>
-
-<div class="day" data-day="Dimanche 19 juillet">
-  <h3>Dimanche 19 juillet</h3>
-  <button type="button" class="day-unavailable">Pas disponible ce jour</button>
-<div class="slots">
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 08-09">08-09</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 09-10">09-10</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 10-11">10-11</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 11-12">11-12</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 12-13">12-13</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 13-14">13-14</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 14-15">14-15</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 15-16">15-16</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 16-17">16-17</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 17-18">17-18</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 18-19">18-19</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 19-20">19-20</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 20-21">20-21</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 21-22">21-22</label>
-<label><input type="checkbox" name="entry.599449867" value="Dimanche 19/07 22-23">22-23</label>
-</div></div>
-</details>
-<!-- FIN SEMAINE 5 -->
-
-
-<br>
-<textarea id="comments" name="entry.1158928402" placeholder="Commentaires"></textarea>
-<br>
-
-<div class="actions">
-<button type="reset" class="reset">Réinitialiser</button>
-<button type="submit" class="submit">Envoyer</button>
-</div>
-
-<div id="summaryBox" style="display:none;
-position:fixed;
-top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.6);
-z-index:9999;
-justify-content:center;
-align-items:center;">
-
-<div style="
-background:white;
-padding:25px;
-border-radius:15px;
-max-width:500px;
-width:90%;
-max-height:80%;
-overflow:auto;
-">
-
-<div id="summaryBox">
-  <h3>Résumé avant validation</h3>
-  <div id="summaryContent"></div>
-  
-  <div style="margin-top:20px;display:flex;gap:15px;">
-    <button type="button" onclick="confirmFinalSend()" 
-      style="flex:1;background:#2e7d32;color:white;border:none;padding:12px;border-radius:8px;">
-      Confirmer l’envoi
-    </button>
-
-    <button type="button" onclick="closeSummary()" 
-      style="flex:1;background:#c62828;color:white;border:none;padding:12px;border-radius:8px;">
-      Annuler
-    </button>
-  </div>
-</div>
-
-
-
-</div>
-</div>
-
-</form>
-
+  <button onclick="envoyer()">Confirmer l’envoi</button>
+  <button onclick="supprimerEnvoi()" style="margin-left:10px;">
+    Supprimer l’envoi
+  </button>
 </div>
 
 <script>
+/* ================= CONFIG ================= */
 
-document.addEventListener("DOMContentLoaded",()=>{
+const TOURNAMENT_START = "2025-06-20";
+const TOURNAMENT_END   = "2025-06-25";
 
-/* ----------------------------
-  OUVRIR / FERMER ACCORDÉONS
------------------------------*/
-window.openAll = function(){
-  document.querySelectorAll("details").forEach(d=>d.open=true);
-}
-window.closeAll = function(){
-  document.querySelectorAll("details").forEach(d=>d.open=false);
-}
+/* ================= INIT ================= */
 
-/* ----------------------------
-  BOUTON PAS DISPONIBLE JOUR
------------------------------*/
-document.querySelectorAll(".day-unavailable").forEach(button => {
+const slotsContainer = document.getElementById("slots");
+const dayOffBtn = document.getElementById("dayOffBtn");
+const dateInput = document.getElementById("date");
 
-  button.addEventListener("click", function(){
+const selections = [];
 
-    const dayBlock = this.closest(".day");
-    const checkboxes = dayBlock.querySelectorAll("input[type=checkbox]");
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("tournamentInfo").innerHTML = `
+    🏆 <strong>Tournoi  OPEN du TC CHARBONNIERES :</strong>
+    du <strong>${formatDateFR(TOURNAMENT_START)}</strong>
+    au <strong>${formatDateFR(TOURNAMENT_END)}</strong><br>
+    
+    
+    <em>La date doit être comprise dans cette période.</em><br>
+    <em>Selectionner tout d'abord la journée à modifier.</em><br>
+    <em>Cochez les créneaux où vous n'êtes <b>PAS LIBRE !!!</b></em><br>
+	
+	
+  `;
 
-    this.classList.toggle("active");
+  dateInput.min = TOURNAMENT_START;
+  dateInput.max = TOURNAMENT_END;
 
-    // On décoche simplement
-    checkboxes.forEach(cb=>{
-      cb.checked = false;
-    });
-
-  });
-
+  genererCreneaux();
 });
 
-/* ----------------------------
-  SI ON COCHE UN CRÉNEAU
------------------------------*/
-document.querySelectorAll("input[type=checkbox]").forEach(cb=>{
-  cb.addEventListener("change",function(){
-    const day=this.closest(".day");
-    const btn=day.querySelector(".day-unavailable");
-    if(btn){
-      btn.classList.remove("active");
-        }
-    buildSummary();
+/* ================= OUTILS ================= */
+
+function formatDateFR(d) {
+  const [y, m, day] = d.split("-");
+  return `${day}/${m}/${y}`;
+}
+
+/* ================= CRENEAUX ================= */
+
+function genererCreneaux() {
+  slotsContainer.innerHTML = "";
+  for (let h = 8; h < 23; h++) {
+    const btn = document.createElement("button");
+    btn.className = "slot-btn";
+    btn.textContent = `${h}-${h+1}`;
+    btn.onclick = () => btn.classList.toggle("active");
+    slotsContainer.appendChild(btn);
+  }
+}
+
+dayOffBtn.onclick = () => {
+  const actif = dayOffBtn.classList.toggle("active");
+  document.querySelectorAll(".slot-btn").forEach(b => {
+    b.disabled = actif;
+    b.classList.remove("active");
   });
-});
+};
 
-/* ----------------------------
-  RÉSUMÉ
------------------------------*/
-function wrapText50(text){
-  return text.match(/.{1,50}/g)?.join("<br>") || "";
-}
+/* ================= VALIDATION ================= */
 
-window.buildSummary=function(){
+function validerJournee() {
+  if (!dateInput.value) {
+    alert("Veuillez saisir une date");
+    return;
+  }
 
-  let html="";
+  const creneaux = [];
 
-  document.querySelectorAll(".day").forEach(day=>{
+  if (dayOffBtn.classList.contains("active")) {
+    creneaux.push("PAS DISPONIBLE CE JOUR");
+  } else {
+    document.querySelectorAll(".slot-btn.active")
+      .forEach(b => creneaux.push(b.textContent));
+  }
 
-    const title=day.querySelector("h3").innerText;
-    const slots=day.querySelectorAll("input[type=checkbox]:checked");
-    const unavailable=day.querySelector(".day-unavailable").classList.contains("active");
+  if (creneaux.length === 0) {
+    alert("Aucun créneau sélectionné");
+    return;
+  }
 
-    if(unavailable){
-      html+=`<p><strong>${title}</strong><br>Aucune disponibilité</p>`;
-    }
-    else if(slots.length>0){
-      html+=`<p><strong>${title}</strong><br>`;
-      slots.forEach(s=>{
-        html+=s.value.split(" ").pop()+" ";
-      });
-      html+="</p>";
-    }
-
+  selections.push({
+    date: dateInput.value,
+    creneaux
   });
 
-  const comments=document.getElementById("comments").value.trim();
-if(comments!==""){
-  html+=`<hr><p><strong>Commentaires :</strong><br>${wrapText50(comments)}</p>`;
+  alert("Journée enregistrée.");
+
+  document.getElementById("btnNouvelle").classList.remove("hidden");
+  document.getElementById("btnTerminer").classList.remove("hidden");
 }
 
+/* ================= ENCHAÎNEMENT ================= */
 
-  document.getElementById("summaryContent").innerHTML=html;
+function nouvelleJournee() {
+  dateInput.value = "";
+  dayOffBtn.classList.remove("active");
+
+  document.querySelectorAll(".slot-btn").forEach(b => {
+    b.classList.remove("active");
+    b.disabled = false;
+  });
+
+  document.getElementById("btnNouvelle").classList.add("hidden");
+  document.getElementById("btnTerminer").classList.add("hidden");
 }
 
-/* ----------------------------
-  AFFICHAGE POPUP
------------------------------*/
-window.showSummary=function(e){
-  e.preventDefault();
-  buildSummary();
-  document.getElementById("summaryBox").style.display="flex";
-  return false;
+function terminer() {
+  const ul = document.getElementById("resumeList");
+  ul.innerHTML = "";
+
+  selections.forEach(s => {
+    const li = document.createElement("li");
+    li.textContent = `${formatDateFR(s.date)} : ${s.creneaux.join(", ")}`;
+    ul.appendChild(li);
+  });
+
+  document.getElementById("resume").classList.remove("hidden");
+  document.getElementById("resume").scrollIntoView({ behavior: "smooth" });
 }
 
-window.closeSummary=function(){
-  document.getElementById("summaryBox").style.display="none";
+/* ================= ENVOI ================= */
+
+function envoyer() {
+  alert("Envoi confirmé (connexion Google à venir)");
+  console.log(selections);
 }
 
+/* ================= SUPPRESSION ================= */
 
-window.confirmFinalSend=function(){
-  closeSummary();
-  document.querySelector("form").submit();
-  setTimeout(()=>{
-    alert(
-"✅ Merci pour votre inscription !\n\n" +
-"Vos disponibilités ont bien été enregistrées pour l’Open Tennis Club Charbonnières 2026.\n\n" +
-"Nous vous recontacterons prochainement pour la planification de vos matchs.\n\n" +
-"À très bientôt sur les courts 🎾"
-);
-;
-  },500);
+function supprimerEnvoi() {
+  if (!confirm("Supprimer toute la saisie ?")) return;
+
+  selections.length = 0;
+
+  nom.value = "";
+  prenom.value = "";
+  licence.value = "";
+  telephone.value = "";
+  commentaires.value = "";
+  dateInput.value = "";
+
+  dayOffBtn.classList.remove("active");
+
+  document.querySelectorAll(".slot-btn").forEach(b => {
+    b.classList.remove("active");
+    b.disabled = false;
+  });
+
+  document.getElementById("resume").classList.add("hidden");
+  document.getElementById("btnNouvelle").classList.add("hidden");
+  document.getElementById("btnTerminer").classList.add("hidden");
+
+  alert("Saisie supprimée.");
 }
-});
-
 </script>
-<script>
-/* ================================
-   SYSTEME ENVOI FINAL GOOGLE FORMS
-================================ */
-
-function showSummary(e){
-  e.preventDefault();        // bloque l'envoi normal
-  buildSummary();            // construit le résumé
-  document.getElementById("summaryBox").style.display="flex";
-  return false;
-}
-
-function closeSummary(){
-  document.getElementById("summaryBox").style.display="none";
-}
-
-function confirmFinalSend(){
-  // Désactive tous les preventDefault existants
-  const form = document.querySelector("form");
-  form.removeAttribute("onsubmit");
-
-  // Envoi réel vers Google Forms
-  form.submit();
-}
-</script>
-
 
 </body>
 </html>
