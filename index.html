@@ -9,10 +9,8 @@
     font-family: Arial, sans-serif;
     max-width: 700px;
     margin: 20px auto;
-    padding-bottom: 100px;
+    padding-bottom: 140px;
   }
-
-  h2 { margin-top: 30px; }
 
   label {
     font-weight: bold;
@@ -24,9 +22,14 @@
     width: 100%;
     padding: 6px;
     margin-top: 4px;
+    font-size: 16px;
   }
 
-  textarea { resize: vertical; }
+  .error {
+    color: red;
+    font-size: 14px;
+    margin-top: 2px;
+  }
 
   .info {
     background: #eef;
@@ -43,7 +46,7 @@
   }
 
   .slot-btn {
-    padding: 8px;
+    padding: 12px;
     background: #2ecc71;
     border: none;
     color: white;
@@ -51,18 +54,12 @@
     cursor: pointer;
   }
 
-  .slot-btn.active {
-    background: #e74c3c;
-  }
-
-  .slot-btn:disabled {
-    background: #aaa;
-    cursor: not-allowed;
-  }
+  .slot-btn.active { background: #e74c3c; }
+  .slot-btn:disabled { background: #aaa; }
 
   .day-off {
     margin-top: 10px;
-    padding: 10px;
+    padding: 12px;
     background: black;
     color: white;
     border: none;
@@ -70,15 +67,10 @@
     width: 100%;
   }
 
-  .day-off.active {
-    background: red;
-  }
+  .day-off.active { background: red; }
 
   .hidden { display: none; }
 
-  ul { padding-left: 20px; }
-
-  /* BARRE D’ACTIONS FIXE */
   .action-bar {
     position: fixed;
     bottom: 0;
@@ -88,9 +80,13 @@
     border-top: 2px solid #3366cc;
     padding: 10px;
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    z-index: 1000;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .action-bar button {
+    padding: 14px;
+    font-size: 16px;
   }
 
   #resume {
@@ -98,6 +94,11 @@
     border: 2px solid #3366cc;
     padding: 15px;
     margin-top: 30px;
+  }
+
+  @media (min-width: 769px) {
+    .action-bar { flex-direction: row; justify-content: center; }
+    .action-bar button { width: auto; }
   }
 </style>
 </head>
@@ -108,208 +109,157 @@
 
 <div class="info" id="tournamentInfo"></div>
 
-<h2>Identité</h2>
+<label>Nom *</label>
+<input id="nom"><div id="errNom" class="error"></div>
 
-<label>Nom</label>
-<input id="nom">
+<label>Prénom *</label>
+<input id="prenom"><div id="errPrenom" class="error"></div>
 
-<label>Prénom</label>
-<input id="prenom">
+<label>Email *</label>
+<input id="email"><div id="errEmail" class="error"></div>
 
-<label>Numéro de licence</label>
-<input id="licence">
-
-<label>Téléphone</label>
-<input id="telephone">
+<label>Téléphone *</label>
+<input id="telephone"><div id="errTel" class="error"></div>
 
 <label>Commentaires</label>
-<textarea id="commentaires" rows="4"></textarea>
+<textarea id="commentaires" rows="3"></textarea>
 
-<h2>Date à modifier</h2>
-
+<h2>Date à modifier *</h2>
 <input type="date" id="date">
 
-<button class="day-off" id="dayOffBtn">
-  PAS DISPONIBLE CE JOUR
-</button>
+<button class="day-off" id="dayOffBtn">PAS DISPONIBLE CE JOUR</button>
 
 <div class="slots" id="slots"></div>
 
-<!-- BARRE DE COMMANDES -->
 <div class="action-bar">
   <button onclick="validerJournee()">Valider la journée</button>
-  <button id="btnNouvelle" class="hidden" onclick="nouvelleJournee()">Saisir une autre date</button>
+  <button id="btnNouvelle" class="hidden" onclick="nouvelleJournee()">Autre date</button>
   <button id="btnTerminer" class="hidden" onclick="terminer()">Saisie terminée</button>
 </div>
 
-<!-- RÉSUMÉ -->
 <div id="resume" class="hidden">
   <h2>Résumé avant envoi</h2>
   <ul id="resumeList"></ul>
-
   <button onclick="envoyer()">Confirmer l’envoi</button>
-  <button onclick="supprimerEnvoi()" style="margin-left:10px;">
-    Supprimer l’envoi
-  </button>
+  <button onclick="supprimerEnvoi()">Supprimer l’envoi</button>
 </div>
 
 <script>
-/* ================= CONFIG ================= */
-
 const TOURNAMENT_START = "2025-06-20";
 const TOURNAMENT_END   = "2025-06-25";
 
-/* ================= INIT ================= */
-
+const selections = [];
 const slotsContainer = document.getElementById("slots");
 const dayOffBtn = document.getElementById("dayOffBtn");
 const dateInput = document.getElementById("date");
 
-const selections = [];
-
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("tournamentInfo").innerHTML = `
-    🏆 <strong>Tournoi  OPEN du TC CHARBONNIERES :</strong>
-    du <strong>${formatDateFR(TOURNAMENT_START)}</strong>
-    au <strong>${formatDateFR(TOURNAMENT_END)}</strong><br>
-    
-    
-    <em>La date doit être comprise dans cette période.</em><br>
-    <em>Selectionner tout d'abord la journée à modifier.</em><br>
-    <em>Cochez les créneaux où vous n'êtes <b>PAS LIBRE !!!</b></em><br>
-	
-	
-  `;
-
+  document.getElementById("tournamentInfo").innerHTML =
+    `Tournoi du ${TOURNAMENT_START} au ${TOURNAMENT_END}`;
   dateInput.min = TOURNAMENT_START;
   dateInput.max = TOURNAMENT_END;
-
   genererCreneaux();
 });
 
-/* ================= OUTILS ================= */
-
-function formatDateFR(d) {
-  const [y, m, day] = d.split("-");
-  return `${day}/${m}/${y}`;
-}
-
-/* ================= CRENEAUX ================= */
-
 function genererCreneaux() {
-  slotsContainer.innerHTML = "";
   for (let h = 8; h < 23; h++) {
-    const btn = document.createElement("button");
-    btn.className = "slot-btn";
-    btn.textContent = `${h}-${h+1}`;
-    btn.onclick = () => btn.classList.toggle("active");
-    slotsContainer.appendChild(btn);
+    const b = document.createElement("button");
+    b.className = "slot-btn";
+    b.textContent = `${h}-${h+1}`;
+    b.onclick = () => b.classList.toggle("active");
+    slotsContainer.appendChild(b);
   }
 }
 
 dayOffBtn.onclick = () => {
-  const actif = dayOffBtn.classList.toggle("active");
+  const a = dayOffBtn.classList.toggle("active");
   document.querySelectorAll(".slot-btn").forEach(b => {
-    b.disabled = actif;
+    b.disabled = a;
     b.classList.remove("active");
   });
 };
 
-/* ================= VALIDATION ================= */
+function clearErrors() {
+  document.querySelectorAll(".error").forEach(e => e.textContent = "");
+}
 
-function validerJournee() {
-  if (!dateInput.value) {
-    alert("Veuillez saisir une date");
-    return;
+function validerIdentite() {
+  clearErrors();
+  let ok = true;
+
+  if (nom.value.length < 2) {
+    errNom.textContent = "Nom obligatoire (min 2 caractères)";
+    ok = false;
   }
 
-  const creneaux = [];
+  if (prenom.value.length < 2) {
+    errPrenom.textContent = "Prénom obligatoire";
+    ok = false;
+  }
 
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+    errEmail.textContent = "Email invalide";
+    ok = false;
+  }
+
+  if (!/^[0-9]{10,15}$/.test(telephone.value)) {
+    errTel.textContent = "Téléphone invalide (10 à 15 chiffres)";
+    ok = false;
+  }
+
+  return ok;
+}
+
+function validerJournee() {
+  if (!validerIdentite()) return;
+  if (!dateInput.value) return alert("Date obligatoire");
+
+  const creneaux = [];
   if (dayOffBtn.classList.contains("active")) {
-    creneaux.push("PAS DISPONIBLE CE JOUR");
+    creneaux.push("PAS DISPONIBLE");
   } else {
     document.querySelectorAll(".slot-btn.active")
       .forEach(b => creneaux.push(b.textContent));
   }
 
-  if (creneaux.length === 0) {
-    alert("Aucun créneau sélectionné");
-    return;
-  }
+  if (creneaux.length === 0) return alert("Sélectionnez au moins un créneau");
 
-  selections.push({
-    date: dateInput.value,
-    creneaux
-  });
+  selections.push({ date: dateInput.value, creneaux });
+  alert("Journée enregistrée");
 
-  alert("Journée enregistrée.");
-
-  document.getElementById("btnNouvelle").classList.remove("hidden");
-  document.getElementById("btnTerminer").classList.remove("hidden");
+  btnNouvelle.classList.remove("hidden");
+  btnTerminer.classList.remove("hidden");
 }
-
-/* ================= ENCHAÎNEMENT ================= */
 
 function nouvelleJournee() {
   dateInput.value = "";
   dayOffBtn.classList.remove("active");
-
   document.querySelectorAll(".slot-btn").forEach(b => {
-    b.classList.remove("active");
     b.disabled = false;
+    b.classList.remove("active");
   });
-
-  document.getElementById("btnNouvelle").classList.add("hidden");
-  document.getElementById("btnTerminer").classList.add("hidden");
 }
 
 function terminer() {
-  const ul = document.getElementById("resumeList");
-  ul.innerHTML = "";
-
+  resumeList.innerHTML = `
+    <li><strong>${prenom.value} ${nom.value}</strong></li>
+    <li>${email.value} – ${telephone.value}</li>
+    <li><strong>Commentaires :</strong> ${commentaires.value || "Aucun"}</li>
+  `;
   selections.forEach(s => {
-    const li = document.createElement("li");
-    li.textContent = `${formatDateFR(s.date)} : ${s.creneaux.join(", ")}`;
-    ul.appendChild(li);
+    resumeList.innerHTML += `<li>${s.date} : ${s.creneaux.join(", ")}</li>`;
   });
-
-  document.getElementById("resume").classList.remove("hidden");
-  document.getElementById("resume").scrollIntoView({ behavior: "smooth" });
+  resume.classList.remove("hidden");
+  resume.scrollIntoView({behavior:"smooth"});
 }
 
-/* ================= ENVOI ================= */
-
 function envoyer() {
-  alert("Envoi confirmé (connexion Google à venir)");
+  alert("Envoi validé");
   console.log(selections);
 }
 
-/* ================= SUPPRESSION ================= */
-
 function supprimerEnvoi() {
-  if (!confirm("Supprimer toute la saisie ?")) return;
-
-  selections.length = 0;
-
-  nom.value = "";
-  prenom.value = "";
-  licence.value = "";
-  telephone.value = "";
-  commentaires.value = "";
-  dateInput.value = "";
-
-  dayOffBtn.classList.remove("active");
-
-  document.querySelectorAll(".slot-btn").forEach(b => {
-    b.classList.remove("active");
-    b.disabled = false;
-  });
-
-  document.getElementById("resume").classList.add("hidden");
-  document.getElementById("btnNouvelle").classList.add("hidden");
-  document.getElementById("btnTerminer").classList.add("hidden");
-
-  alert("Saisie supprimée.");
+  location.reload();
 }
 </script>
 
