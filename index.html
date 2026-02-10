@@ -105,7 +105,7 @@
 
 <body>
 
-<h1>Modification de disponibilités</h1>
+<h1>Modification de vos disponibilités</h1>
 
 <div class="info" id="tournamentInfo"></div>
 
@@ -155,9 +155,21 @@ const dateInput = document.getElementById("date");
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("tournamentInfo").innerHTML =
-    `Tournoi du ${TOURNAMENT_START} au ${TOURNAMENT_END}`;
+    `<b>Tournoi OPEN du ${TOURNAMENT_START} au ${TOURNAMENT_END}</b><br>
+	Lors de votre inscription vous avez indiqué vos disponibilites; si vous  souhaitez modifier certaines d'entre elles, merci d'indiquer les nouveaux créneaux où vous 
+	n'<b>êtes PAS LIBRES :</b><br>
+	- choisissez la journée concernée<br>
+	- selectionnez les créneaux ou vous n'êtes pas libre.<br>
+	- passez éventuellement à une autre journée<br>
+
+	
+	
+	
+	`;
   dateInput.min = TOURNAMENT_START;
   dateInput.max = TOURNAMENT_END;
+  
+   
   genererCreneaux();
 });
 
