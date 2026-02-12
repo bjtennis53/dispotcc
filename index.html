@@ -4,110 +4,113 @@
 <meta charset="UTF-8">
 <title>Modification de disponibilités</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    max-width: 700px;
-    margin: 20px auto;
-    padding-bottom: 140px;
-  }
+body {
+  font-family: Arial, sans-serif;
+  max-width: 700px;
+  margin: 20px auto;
+  padding-bottom: 140px;
+}
 
-  label {
-    font-weight: bold;
-    display: block;
-    margin-top: 12px;
-  }
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 12px;
+}
 
-  input, textarea {
-    width: 100%;
-    padding: 6px;
-    margin-top: 4px;
-    font-size: 16px;
-  }
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  font-size: 16px;
+}
 
-  .error {
-    color: red;
-    font-size: 14px;
-    margin-top: 2px;
-  }
+.error {
+  color: red;
+  font-size: 14px;
+}
 
-  .info {
-    background: #eef;
-    padding: 10px;
-    border-left: 4px solid #3366cc;
-    margin-bottom: 20px;
-  }
+.info {
+  background: #eef;
+  padding: 10px;
+  border-left: 4px solid #3366cc;
+  margin-bottom: 20px;
+}
 
-  .slots {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-    margin-top: 10px;
-  }
+.slots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
 
-  .slot-btn {
-    padding: 12px;
-    background: #2ecc71;
-    border: none;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-  }
+.slot-btn {
+  padding: 12px;
+  background: #2ecc71;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
-  .slot-btn.active { background: #e74c3c; }
-  .slot-btn:disabled { background: #aaa; }
+.slot-btn.active { background: #e74c3c; }
+.slot-btn:disabled { background: #aaa; }
 
-  .day-off {
-    margin-top: 10px;
-    padding: 12px;
-    background: black;
-    color: white;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-  }
+.day-off {
+  margin-top: 10px;
+  padding: 12px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
 
-  .day-off.active { background: red; }
+.day-off.active { background: red; }
 
-  .hidden { display: none; }
+.hidden { display: none; }
 
-  .action-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 2px solid #3366cc;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 2px solid #3366cc;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-  .action-bar button {
-    padding: 14px;
-    font-size: 16px;
-  }
+.action-bar button {
+  padding: 14px;
+  font-size: 16px;
+}
 
-  #resume {
-    background: #f9f9ff;
-    border: 2px solid #3366cc;
-    padding: 15px;
-    margin-top: 30px;
-  }
+#resume {
+  background: #f9f9ff;
+  border: 2px solid #3366cc;
+  padding: 15px;
+  margin-top: 30px;
+}
 
-  @media (min-width: 769px) {
-    .action-bar { flex-direction: row; justify-content: center; }
-    .action-bar button { width: auto; }
-  }
+@media (min-width: 769px) {
+  .action-bar { flex-direction: row; justify-content: center; }
+  .action-bar button { width: auto; }
+}
 </style>
 </head>
 
 <body>
 
-<h1>Modification de vos disponibilités</h1>
+<h1>Modification de disponibilités</h1>
 
-<div class="info" id="tournamentInfo"></div>
+<div class="info">
+Tournoi du 20/06/2025 au 25/06/2025
+</div>
 
 <label>Nom *</label>
 <input id="nom"><div id="errNom" class="error"></div>
@@ -141,37 +144,19 @@
   <h2>Résumé avant envoi</h2>
   <ul id="resumeList"></ul>
   <button onclick="envoyer()">Confirmer l’envoi</button>
-  <button onclick="supprimerEnvoi()">Supprimer l’envoi</button>
+  <button onclick="location.reload()">Supprimer l’envoi</button>
 </div>
 
 <script>
-const TOURNAMENT_START = "2025-06-20";
-const TOURNAMENT_END   = "2025-06-25";
+const SCRIPT_URL = "COLLE_ICI_TON_URL_APPS_SCRIPT";
 
 const selections = [];
 const slotsContainer = document.getElementById("slots");
 const dayOffBtn = document.getElementById("dayOffBtn");
 const dateInput = document.getElementById("date");
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("tournamentInfo").innerHTML =
-    `<b>Tournoi OPEN du ${TOURNAMENT_START} au ${TOURNAMENT_END}</b><br>
-	Lors de votre inscription vous avez indiqué vos disponibilites; si vous  souhaitez modifier certaines d'entre elles, merci d'indiquer les nouveaux créneaux où vous 
-	n'<b>êtes PAS LIBRES :</b><br>
-	- choisissez la journée concernée<br>
-	- selectionnez les créneaux ou vous n'êtes pas libre.<br>
-	- passez éventuellement à une autre journée<br>
-
-	
-	
-	
-	`;
-  dateInput.min = TOURNAMENT_START;
-  dateInput.max = TOURNAMENT_END;
-  
-   
-  genererCreneaux();
-});
+dateInput.min = "2025-06-20";
+dateInput.max = "2025-06-25";
 
 function genererCreneaux() {
   for (let h = 8; h < 23; h++) {
@@ -182,11 +167,12 @@ function genererCreneaux() {
     slotsContainer.appendChild(b);
   }
 }
+genererCreneaux();
 
 dayOffBtn.onclick = () => {
-  const a = dayOffBtn.classList.toggle("active");
+  const actif = dayOffBtn.classList.toggle("active");
   document.querySelectorAll(".slot-btn").forEach(b => {
-    b.disabled = a;
+    b.disabled = actif;
     b.classList.remove("active");
   });
 };
@@ -200,7 +186,7 @@ function validerIdentite() {
   let ok = true;
 
   if (nom.value.length < 2) {
-    errNom.textContent = "Nom obligatoire (min 2 caractères)";
+    errNom.textContent = "Nom obligatoire";
     ok = false;
   }
 
@@ -215,7 +201,7 @@ function validerIdentite() {
   }
 
   if (!/^[0-9]{10,15}$/.test(telephone.value)) {
-    errTel.textContent = "Téléphone invalide (10 à 15 chiffres)";
+    errTel.textContent = "Téléphone invalide";
     ok = false;
   }
 
@@ -261,17 +247,41 @@ function terminer() {
   selections.forEach(s => {
     resumeList.innerHTML += `<li>${s.date} : ${s.creneaux.join(", ")}</li>`;
   });
+
   resume.classList.remove("hidden");
   resume.scrollIntoView({behavior:"smooth"});
 }
 
 function envoyer() {
-  alert("Envoi validé");
-  console.log(selections);
-}
 
-function supprimerEnvoi() {
-  location.reload();
+  if (selections.length === 0) {
+    alert("Aucune journée enregistrée");
+    return;
+  }
+
+  const payload = {
+    nom: nom.value,
+    prenom: prenom.value,
+    email: email.value,
+    telephone: telephone.value,
+    commentaires: commentaires.value,
+    selections: selections
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbyOF5zds7mEUbT-JwUo33glcZcrNmryCkih-VKD1fPpCHDQT6mpNZQps7fWV83rF0E/exec", {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("Envoi réussi !");
+    location.reload();
+  })
+  .catch(err => {
+    alert("Erreur lors de l'envoi");
+    console.error(err);
+  });
 }
 </script>
 
